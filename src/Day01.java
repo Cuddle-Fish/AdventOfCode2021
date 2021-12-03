@@ -5,7 +5,7 @@ import java.util.Scanner;
 
 public class Day01 {
 
-    public static LinkedList<Integer> readReport(File report) {
+    public static LinkedList<Integer> readInput(File report) {
         LinkedList<Integer> data = new LinkedList<>();
         try{
             Scanner depth = new Scanner(report);
@@ -48,9 +48,9 @@ public class Day01 {
     }
 
     public static void main(String[] args) {
-        File sweepReport = new File("C:\\Users\\Kgrae\\Documents\\Java\\AdventOfCode\\src\\Sonar_Sweep_Report.txt");
-        LinkedList<Integer> reportList = readReport(sweepReport);
-        System.out.println(consecutiveIncrease(reportList));
-        System.out.println(increaseEveryThree(reportList));
+        File sweepReport = new File("src\\Sonar_Sweep_Report.txt");
+        LinkedList<Integer> reportList = readInput(sweepReport);
+        System.out.println("Task 1: " + consecutiveIncrease(reportList));
+        System.out.println("Task 2: " + increaseEveryThree(reportList));
     }
 }
