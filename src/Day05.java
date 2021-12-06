@@ -9,9 +9,9 @@ public class Day05 {
     public static void main(String[] args) {
         File ventInput = new File("src\\Nearby_Hydrothermal_Vents.txt");
         VentDiagram diagram = new VentDiagram(ventInput, false);
-        System.out.println("Task 1: " + diagram.getTotalVentsAboveTwo());
+        System.out.println("Part 1: " + diagram.getTotalVentsAboveTwo());
         VentDiagram diagram2 = new VentDiagram(ventInput, true);
-        System.out.println("Task 2: " + diagram2.getTotalVentsAboveTwo());
+        System.out.println("Part 2: " + diagram2.getTotalVentsAboveTwo());
     }
 }
 
