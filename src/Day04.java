@@ -8,7 +8,8 @@ public class Day04 {
         File bingoInput = new File("src\\Bingo_Subsystem.txt");
         Bingo newGame = new Bingo(bingoInput);
         PlayGame play = new PlayGame(newGame);
-        System.out.println("Task 1: "+ play.score);
+        System.out.println("Task 1: " + play.winningScore);
+        System.out.println("Task 2: " + play.losingScore);
     }
 }
 
@@ -37,6 +38,13 @@ class Bingo {
             System.out.println("Error, file not found");
         }
     }
+
+
+    public void resetAllBoards() {
+        for (Board currentBoard : boards) {
+            currentBoard.resetBoard();
+        }
+    }
 }
 
 class Board {
@@ -58,8 +66,20 @@ class Board {
         }
     }
 
-    int count = 0;
+
+    public void resetBoard() {
+        for (Num number : board) {
+            number.marked = false;
+        }
+        for (int i = 0; i < 5; i++) {
+            markedInRow[i] = 0;
+            markedInColumn[i] = 0;
+        }
+    }
+
+
     public void printBoard() {
+        int count = 0;
         for (Num val : board) {
             System.out.print(val.value + " ");
             ++count;
@@ -86,12 +106,19 @@ class Num {
 }
 
 class PlayGame {
-    int score;
+    int winningScore;
+    int losingScore;
 
     public PlayGame(Bingo game) {
+        findWinningBoard(game);
+        findLosingBoard(game);
+    }
+
+
+    private void findWinningBoard(Bingo game) {
         for (int i = 0; i < game.drawnNumbers.size(); i++) {
             for (Board currentBoard : game.boards) {
-                for (int j = 0; j < currentBoard.board.length; j++) {
+                for (int j = 0; j < 25; j++) {
                     if (currentBoard.board[j].value == game.drawnNumbers.get(i)) {
                         currentBoard.board[j].marked = true;
                         ++currentBoard.markedInColumn[currentBoard.board[j].column];
@@ -99,7 +126,8 @@ class PlayGame {
                     }
                     if (currentBoard.markedInRow[currentBoard.board[j].row] == 5
                             || currentBoard.markedInColumn[currentBoard.board[j].column] == 5) {
-                        this.score = calcScore(currentBoard, game.drawnNumbers.get(i));
+                        this.winningScore = calcScore(currentBoard, game.drawnNumbers.get(i));
+                        game.resetAllBoards();
                         return;
                     }
                 }
@@ -107,7 +135,37 @@ class PlayGame {
         }
     }
 
-    public int calcScore(Board board, int lastDrawnNum) {
+
+    public void findLosingBoard(Bingo game) {
+        LinkedList<Board> winningBoardsFound = new LinkedList<>();
+
+        for (int i = 0; i < game.drawnNumbers.size(); i++) {
+            for (Board currentBoard : game.boards) {
+                if (!winningBoardsFound.contains(currentBoard)) {
+                    for (int j = 0; j < 25; j++) {
+                        if (currentBoard.board[j].value == game.drawnNumbers.get(i)) {
+                            currentBoard.board[j].marked = true;
+                            ++currentBoard.markedInRow[currentBoard.board[j].row];
+                            ++currentBoard.markedInColumn[currentBoard.board[j].column];
+                        }
+                        if (currentBoard.markedInColumn[currentBoard.board[j].column] == 5
+                                || currentBoard.markedInRow[currentBoard.board[j].column] == 5) {
+                            if (winningBoardsFound.size() == game.boards.size() - 1) {
+                                this.losingScore = calcScore(currentBoard, game.drawnNumbers.get(i));
+                                return;
+                            } else {
+                                winningBoardsFound.add(currentBoard);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+    private int calcScore(Board board, int lastDrawnNum) {
         int score = 0;
 
         for (Num number : board.board) {
